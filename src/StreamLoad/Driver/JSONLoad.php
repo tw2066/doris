@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Doris\StreamLoad\Driver;
+
+class JSONLoad extends AbstractLoad
+{
+    protected string $content = '';
+
+    protected array $data = [];
+
+    public function add(array $data): void
+    {
+        $isArrayMultidimensionalMap = is_array(current($data));
+        if ($isArrayMultidimensionalMap) {
+            array_map(fn ($item) => $this->content .= json_encode($item) . PHP_EOL, $data);
+        } else {
+            $this->content .= json_encode($data) . PHP_EOL;
+        }
+    }
+
+    public function addFile(array $data): void
+    {
+        $this->filePath ??= tempnam(sys_get_temp_dir(), 'doris') . '.json';
+        $this->fp ??= fopen($this->filePath, 'a');
+        $isArrayMultidimensionalMap = is_array(current($data));
+        if ($isArrayMultidimensionalMap) {
+            array_map(function ($item) {
+                fwrite($this->fp, json_encode($item) . PHP_EOL);
+            }, $data);
+        } else {
+            fwrite($this->fp, json_encode($data) . PHP_EOL);
+        }
+    }
+
+    public function getContents(): string
+    {
+        return $this->content;
+    }
+
+    public function getParameters(): array
+    {
+        return [
+            'format' => 'json',
+            'read_json_by_line' => 'true',
+            'strip_outer_array' => 'false',
+        ];
+    }
+}
