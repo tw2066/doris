@@ -24,7 +24,7 @@ class Builder
         private readonly string $feHost,
         private readonly string $user = '',
         private readonly string $password = '',
-        protected bool $constMemory = false
+        protected bool $constMemory = true
     ) {
         $this->load = new $this->format->value();
     }
@@ -68,31 +68,15 @@ class Builder
         return new Response(json_decode($data, true));
     }
 
-    public function setParam(Parameters|string $key, $value): static
+    public function setParam(Param|string $key, $value): static
     {
         $key = is_string($key) ? $key : $key->value;
         $this->parameters[$key] = $value;
         return $this;
     }
 
-    protected function buildOptions(string $data, array $options = []): array
-    {
-        if (empty($this->filePath)) {
-            $data = Utils::tryFopen($this->filePath, 'r');
-        }
-        $default = [
-            'body' => $data,
-            'headers' => $this->buildHeaders(),
-        ];
-
-        return array_merge($default, $options);
-    }
-
     private function buildHeaders(): array
     {
-        // return [
-        //     'Content-Type' => 'application/x-www-form-urlencoded',
-        // ];
         $headers = [
             'Authorization' => 'Basic ' . base64_encode($this->user . ':' . $this->password),
         ];

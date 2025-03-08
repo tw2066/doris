@@ -6,41 +6,43 @@ namespace Doris\StreamLoad;
 
 class Response
 {
-    public int $txnId;
+    public $txnId;
 
-    public string $label;
+    public $label;
 
-    public string $comment;
+    public $comment;
 
-    public string $twoPhaseCommit;
+    public $groupCommit;
 
-    public string $status;
+    public $twoPhaseCommit;
 
-    public string $message;
+    public $status;
 
-    public int $numberTotalRows;
+    public $message;
 
-    public int $numberLoadedRows;
+    public $numberTotalRows;
 
-    public int $numberFilteredRows;
+    public $numberLoadedRows;
 
-    public int $numberUnselectedRows;
+    public $numberFilteredRows;
 
-    public int $loadBytes;
+    public $numberUnselectedRows;
 
-    public int $loadTimeMs;
+    public $loadBytes;
 
-    public int $beginTxnTimeMs;
+    public $loadTimeMs;
 
-    public int $streamLoadPutTimeMs;
+    public $beginTxnTimeMs;
 
-    public int $readDataTimeMs;
+    public $streamLoadPutTimeMs;
 
-    public int $writeDataTimeMs;
+    public $readDataTimeMs;
 
-    public int $commitAndPublishTimeMs;
+    public $writeDataTimeMs;
 
-    public string $errorURL = '';
+    public $commitAndPublishTimeMs;
+
+    public $errorURL;
 
     public function __construct($data)
     {

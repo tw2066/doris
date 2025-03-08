@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doris\StreamLoad;
 
-enum Parameters: string
+enum Param: string
 {
     case LABEL = 'label';
     case COLUMN_SEPARATOR = 'column_separator';
@@ -38,20 +38,5 @@ enum Parameters: string
     case ESCAPE = 'escape';
     case MEMTABLE_ON_SINK_NODE = 'memtable_on_sink_node';
     case UNIQUE_KEY_UPDATE_MODE = 'unique_key_update_mode';
-
-    public const ALIAS = [
-        'sequence_col' => 'function_column.sequence_col',
-    ];
-
-    public function getParameters(): array
-    {
-        $param = [];
-        foreach ($this as $key => $value) {
-            if ($value !== null) {
-                $key = self::ALIAS[$key] ?? $key;
-                $param[$key] = $value;
-            }
-        }
-        return $param;
-    }
+    case GROUP_COMMIT = 'group_commit';
 }
