@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doris\StreamLoad;
 
-enum Param: string
+enum Header: string
 {
     case LABEL = 'label';
     case COLUMN_SEPARATOR = 'column_separator';

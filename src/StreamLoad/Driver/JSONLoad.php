@@ -20,7 +20,7 @@ class JSONLoad extends AbstractLoad
         }
     }
 
-    public function addFile(array $data): void
+    public function putFile(array $data): void
     {
         $this->filePath ??= tempnam(sys_get_temp_dir(), 'doris') . '.json';
         $this->fp ??= fopen($this->filePath, 'a');
@@ -39,7 +39,7 @@ class JSONLoad extends AbstractLoad
         return $this->content;
     }
 
-    public function getParameters(): array
+    public function getHeaders(): array
     {
         return [
             'format' => 'json',

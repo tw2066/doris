@@ -30,6 +30,11 @@
       "Doris\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "DorisTest\\": "tests/"
+    }
+  },
   "config": {
     "optimize-autoloader": true,
     "sort-packages": true

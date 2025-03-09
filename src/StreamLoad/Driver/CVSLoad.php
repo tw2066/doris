@@ -12,24 +12,23 @@ class CVSLoad extends AbstractLoad
         $this->putCVS($data);
     }
 
-    public function addFile(array $data): void
+    public function putFile(array $data): void
     {
         $this->filePath ??= tempnam(sys_get_temp_dir(), 'doris') . '.cvs';
         $this->fp ??= fopen($this->filePath, 'a');
         $this->putCVS($data);
     }
 
-    public function getContents(): bool|string
+    public function getContents(): string
     {
         rewind($this->fp);
         return stream_get_contents($this->fp);
     }
 
-    public function getParameters(): array
+    public function getHeaders(): array
     {
         return [
             'column_separator' => ',',
-            // 'columns' => 'user_id,name,age',
         ];
     }
 

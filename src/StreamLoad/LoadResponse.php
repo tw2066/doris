@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doris\StreamLoad;
 
-class Response
+class LoadResponse
 {
     public $txnId;
 

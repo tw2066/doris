@@ -16,7 +16,7 @@ abstract class AbstractLoad implements LoadInterface
         $this->filePath && @unlink($this->filePath);
     }
 
-    public function getFile(): ?string
+    public function getFilePath(): ?string
     {
         return $this->filePath;
     }

@@ -31,3 +31,4 @@ jobs:
       - name: Run Test Cases
         run: |
           composer analyse
+          composer test

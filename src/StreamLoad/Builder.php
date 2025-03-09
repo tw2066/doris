@@ -10,7 +10,7 @@ use GuzzleHttp\Psr7\Utils;
 
 class Builder
 {
-    protected array $parameters = [];
+    protected array $headers = [];
 
     protected string $filePath = '';
 
@@ -32,7 +32,7 @@ class Builder
     public function data(array $data): static
     {
         if ($this->constMemory) {
-            $this->load->addFile($data);
+            $this->load->putFile($data);
         } else {
             $this->load->add($data);
         }
@@ -45,9 +45,9 @@ class Builder
         return $this;
     }
 
-    public function load(): Response
+    public function load(): LoadResponse
     {
-        $filePath = $this->filePath ?: $this->load->getFile();
+        $filePath = $this->filePath ?: $this->load->getFilePath();
         if (! empty($filePath)) {
             $data = Utils::tryFopen($filePath, 'r');
         } else {
@@ -65,22 +65,30 @@ class Builder
             $options
         );
         $data = $response->getBody()->getContents();
-        return new Response(json_decode($data, true));
+        return new LoadResponse(json_decode($data, true));
     }
 
-    public function setParam(Param|string $key, $value): static
+    public function setHeader(Header|string $key, $value): static
     {
         $key = is_string($key) ? $key : $key->value;
-        $this->parameters[$key] = $value;
+        $this->headers[$key] = is_bool($value) ? ($value ? 'true' : 'false') : $value;
         return $this;
     }
 
-    private function buildHeaders(): array
+    public function setHeaders(array $headers): static
     {
-        $headers = [
+        foreach ($headers as $key => $value) {
+            $this->setHeader($key, $value);
+        }
+        return $this;
+    }
+
+    protected function buildHeaders(): array
+    {
+        $initHeaders = [
             'Authorization' => 'Basic ' . base64_encode($this->user . ':' . $this->password),
         ];
-        $loadParam = $this->load->getParameters();
-        return array_merge($headers, $loadParam, $this->parameters);
+        $loadHeaders = $this->filePath ? [] : $this->load->getHeaders();
+        return array_merge($initHeaders, $loadHeaders, $this->headers);
     }
 }
