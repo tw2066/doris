@@ -1,11 +1,11 @@
 {
-    "name": "tangwei/doris",
-    "description": "A doris Stream Load for php.",
-    "license": "MIT",
-    "keywords": [
-      "doris",
-      "stream load"
-    ],
+  "name": "tangwei/doris",
+  "description": "A doris Stream Load for php.",
+  "license": "MIT",
+  "keywords": [
+    "doris",
+    "stream load"
+  ],
   "authors": [
     {
       "name": "TangWei",

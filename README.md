@@ -35,7 +35,7 @@ $builder = $streamLoad->format(Format::CSV)->table('test_stream_load');
 ```
 
 #### 内存模式
-* 默认内存模式(底层通过文件进行提交),特别适用于大量数据一次提交;
+* 默认内存模式(底层通过文件进行提交),特别适用于大量数据提交;
 * 提交数据量小时,可以通过constMemory方法设置false
 ```php
 $load = new StreamLoad('http://127.0.0.1:8040', 'test_db', 'root','');
