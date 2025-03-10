@@ -9,14 +9,14 @@ composer require tangwei/doris
 ```
 
 ### 使用
-快速上手
+快速使用
 ```php
-$feHost = 'http://127.0.0.1:8040';       
+$feHost = 'http://127.0.0.1:8030';       
 $db = 'test_db';       
 $user = 'root';       
 $password = '';       
 $streamLoad = new StreamLoad($feHost, $db, $db,$password);
-$builder = $load->table('test_stream_load');
+$builder = $streamLoad->table('test_stream_load');
 $builder->data([
     ['user_id' => 1, 'name' => 'q', 'age' => 11],
     ['user_id' => 2, 'name' => 'w', 'age' => 118],
@@ -26,7 +26,17 @@ $builder->data(
 );
 $data = $builder->load();
 ```
-
+#### 获取streamLoad对象
+通过`.env`文件配置,获取streamLoad对象
+```dotenv
+DORIS_FE_HOST=http://192.168.1.72:8040
+DORIS_DB=testdb
+DORIS_USER=root
+DORIS_PASSWORD=''
+```
+```php
+$streamLoad = Doris::streamLoad();
+```
 #### 设置提交格式
 默认使用json提交,可以通过format方法设置格式
 ```php
@@ -35,19 +45,18 @@ $builder = $streamLoad->format(Format::CSV)->table('test_stream_load');
 ```
 
 #### 内存模式
-* 默认内存模式(底层通过文件进行提交),特别适用于大量数据提交;
-* 提交数据量小时,可以通过constMemory方法设置false
+提交大量单个数据大,可以通过constMemory方法设置true,减少内存占用
 ```php
-$load = new StreamLoad('http://127.0.0.1:8040', 'test_db', 'root','');
-$builder = $load->constMemory(false)->table('test_stream_load');
+$streamLoad = Doris::streamLoad();
+$builder = $streamLoad->constMemory(true)->table('test_stream_load');
 ```
 
-#### 设置参数
+#### 设置Header参数
 可以通过setHeader方法设置参数,参考[官方文档](https://doris.apache.org/zh-CN/docs/data-operate/import/import-way/stream-load-manual)Header参数
 
 ```php
-$load = new StreamLoad('http://127.0.0.1:8040', 'test_db', 'root','');
-$builder = $load->table('test_stream_load');
+$streamLoad = Doris::streamLoad();
+$builder = $streamLoad->table('test_stream_load');
 $builder->setHeader(\Doris\StreamLoad\Header::COLUMNS, 'user_id,name,age');
 ```
 #### 异步模式
@@ -60,12 +69,20 @@ $builder->setHeader(\Doris\StreamLoad\Header::GROUP_COMMIT, 'async_mode');
 本地有cvs文件,可以通过文件直接导入上传
 
 ```php
-$load = new StreamLoad('http://127.0.0.1:8040', 'test_db', 'root','');
-$builder = $load->table('test_stream_load');
+$streamLoad = Doris::streamLoad();
+$builder = $streamLoad->table('test_stream_load');
 $builder->setHeader(\Doris\StreamLoad\Header::COLUMNS, 'user_id,name,age')
 ->file('/user/test.csv')
 ->load();
 ```
 
 #### hyperf 框架使用
-底层自动判断hyperf的运行环境,无需做额外处理
+底层自动判断协程环境,无需额外处理
+
+#### 性能测试
+| 文件格式 | 数据量 | constMemory | 耗时(s) | 内存大小(MB) |
+| -------- | ------ | ----------- | ------- | ------------ |
+| json     | 100万  | fales       | 1.93    | 48.58        |
+| json     | 100万  | true        | 7.59    | 1.21         |
+| cvs      | 100万  | fales       | 1.62    | 22.83        |
+| cvs      | 100万  | true        | 7.52    | 1.21         |

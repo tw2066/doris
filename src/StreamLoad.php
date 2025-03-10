@@ -7,11 +7,10 @@ namespace Doris;
 use Doris\StreamLoad\Builder;
 use Doris\StreamLoad\Format;
 use GuzzleHttp\Client;
-use Hyperf\Guzzle\HandlerStackFactory;
 
 class StreamLoad
 {
-    protected bool $constMemory = true;
+    protected bool $constMemory = false;
 
     /**
      * @var Client
@@ -34,7 +33,7 @@ class StreamLoad
         return $this;
     }
 
-    public function constMemory(bool $constMemory = false): static
+    public function constMemory(bool $constMemory = true): static
     {
         $this->constMemory = $constMemory;
         return $this;
@@ -70,14 +69,7 @@ class StreamLoad
     protected function getClient()
     {
         if ($this->client == null) {
-            $config = [];
-            if (class_exists(HandlerStackFactory::class)) {
-                $factory = new HandlerStackFactory();
-                $config = [
-                    'handler' => $factory->create(),
-                ];
-            }
-            $this->client = new Client($config);
+            $this->client = new Client();
         }
         return $this->client;
     }

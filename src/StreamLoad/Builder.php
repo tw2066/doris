@@ -24,7 +24,7 @@ class Builder
         private readonly string $feHost,
         private readonly string $user = '',
         private readonly string $password = '',
-        protected bool $constMemory = true
+        protected bool $constMemory = false
     ) {
         $this->load = new $this->format->value();
     }
@@ -86,6 +86,7 @@ class Builder
     protected function buildHeaders(): array
     {
         $initHeaders = [
+            'Expect' => '100-continue',
             'Authorization' => 'Basic ' . base64_encode($this->user . ':' . $this->password),
         ];
         $loadHeaders = $this->filePath ? [] : $this->load->getHeaders();
