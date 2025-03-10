@@ -45,7 +45,7 @@ $builder = $streamLoad->format(Format::CSV)->table('test_stream_load');
 ```
 
 #### 内存模式
-提交大量单个数据大,可以通过constMemory方法设置true,减少内存占用
+提交大量数据时,可以设置constMemory为true,减少内存占用
 ```php
 $streamLoad = Doris::streamLoad();
 $builder = $streamLoad->constMemory(true)->table('test_stream_load');
