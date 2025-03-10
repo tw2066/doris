@@ -65,7 +65,11 @@ class Builder
             $options
         );
         $data = $response->getBody()->getContents();
-        return new LoadResponse(json_decode($data, true));
+        $loadResponse = new LoadResponse(json_decode($data, true));
+        if ($loadResponse->status == 'Fail') {
+            throw new LoadException(sprintf('Doris Stream Load Error: %s, errorURL: %s', $loadResponse->message, $loadResponse->errorURL));
+        }
+        return $loadResponse;
     }
 
     public function setHeader(Header|string $key, $value): static
