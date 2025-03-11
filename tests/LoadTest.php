@@ -47,7 +47,7 @@ class LoadTest extends TestCase
 2,w,19
 3,w,20
 ';
-        $Load = new StreamLoad\Driver\CVSLoad();
+        $Load = new StreamLoad\Driver\CSVLoad();
         $Load->add([
             ['user_id' => 1, 'name' => 'q', 'age' => 18],
             ['user_id' => 2, 'name' => 'w', 'age' => 19],
@@ -56,7 +56,7 @@ class LoadTest extends TestCase
         $result = $Load->getContents();
 
         $this->assertEquals($result, $contents);
-        $Load = new StreamLoad\Driver\CVSLoad();
+        $Load = new StreamLoad\Driver\CSVLoad();
         $Load->putFile([
             ['user_id' => 1, 'name' => 'q', 'age' => 18],
             ['user_id' => 2, 'name' => 'w', 'age' => 19],
@@ -69,8 +69,8 @@ class LoadTest extends TestCase
     public function testLoad()
     {
         if (PHP_OS === 'Darwin') {
-            $this->loadJSON();
             $this->loadCVS();
+            $this->loadJSON();
             $this->async();
         }
     }
@@ -78,20 +78,20 @@ class LoadTest extends TestCase
     public function loadCVS()
     {
         $load = new StreamLoad('http://192.168.1.72:8040', 'testdb', 'root');
-        $builder = $load->format(StreamLoad\Format::CVS)->constMemory(true)->table('test_streamload');
+        $builder = $load->format(StreamLoad\Format::CSV)->constMemory(true)->table('test_streamload');
         $builder->data([
-            ['user_id' => 1, 'name' => 'cvs1', 'age' => 11],
-            ['user_id' => 2, 'name' => 'cvs2', 'age' => 12],
+            [1, 'cvs\1', 11],
+            [2, "cvs'2", 12],
         ]);
         $builder->data(
-            ['user_id' => 3, 'name' => 'cvs3', 'age' => 13],
+            [3, 'cvs,3', 13],
         );
         $data = $builder
             ->setHeader(Header::COLUMNS, 'user_id,name,age')
             ->load();
         $this->assertEquals($data->status, 'Success');
 
-        $builder = $load->format(StreamLoad\Format::CVS)->constMemory(false)->table('test_streamload');
+        $builder = $load->format(StreamLoad\Format::CSV)->constMemory(false)->table('test_streamload');
         $builder->data([
             ['user_id' => 4, 'name' => 'cvs4', 'age' => 14],
             ['user_id' => 5, 'name' => 'cvs5', 'age' => 15],
@@ -110,22 +110,22 @@ class LoadTest extends TestCase
         $load = new StreamLoad('http://192.168.1.72:8040', 'testdb', 'root');
         $builder = $load->format(StreamLoad\Format::JSON)->constMemory(true)->table('test_streamload');
         $builder->data([
-            ['user_id' => 11, 'name' => 'json11', 'age' => 111],
-            ['user_id' => 12, 'name' => 'json12', 'age' => 112],
+            ['user_id' => 11, 'name' => 'json"11', 'age' => 111],
+            ['user_id' => 12, 'name' => 'json\12', 'age' => 112],
         ]);
         $builder->data(
-            ['user_id' => 13, 'name' => 'json13', 'age' => 113],
+            ['user_id' => 13, 'name' => 'json,13', 'age' => 113],
         );
         $data = $builder->load();
         $this->assertEquals($data->status, 'Success');
 
         $builder = $load->format(StreamLoad\Format::JSON)->constMemory(false)->table('test_streamload');
         $builder->data([
-            ['user_id' => 14, 'name' => 'json14', 'age' => 114],
-            ['user_id' => 15, 'name' => 'json15', 'age' => 115],
+            ['user_id' => 14, 'name' => 'json14_你好', 'age' => 114],
+            ['user_id' => 15, 'name' => 'json15_"!@#$%^&*()', 'age' => 115],
         ]);
         $builder->data(
-            ['user_id' => 16, 'name' => 'json16', 'age' => 116],
+            ['user_id' => 16, 'name' => "json16_`1,',", 'age' => 116],
         );
         $data = $builder
             ->load();

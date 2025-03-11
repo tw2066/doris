@@ -22,7 +22,7 @@ class JSONLoad extends AbstractLoad
 
     public function putFile(array $data): void
     {
-        $this->filePath ??= tempnam(sys_get_temp_dir(), 'doris') . '.json';
+        $this->filePath ??= tempnam(sys_get_temp_dir(), 'doris_json_');
         $this->fp ??= fopen($this->filePath, 'a');
         $isArrayMultidimensionalMap = is_array(current($data));
         if ($isArrayMultidimensionalMap) {

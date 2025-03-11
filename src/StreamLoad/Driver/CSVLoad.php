@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Doris\StreamLoad\Driver;
 
-class CVSLoad extends AbstractLoad
+class CSVLoad extends AbstractLoad
 {
     public function add(array $data): void
     {
         $this->fp ??= fopen('php://memory', 'r+');
-        $this->putCVS($data);
+        $this->putCSV($data);
     }
 
     public function putFile(array $data): void
     {
-        $this->filePath ??= tempnam(sys_get_temp_dir(), 'doris') . '.cvs';
+        $this->filePath ??= tempnam(sys_get_temp_dir(), 'doris_csv_');
         $this->fp ??= fopen($this->filePath, 'a');
-        $this->putCVS($data);
+        $this->putCSV($data);
     }
 
     public function getContents(): string
@@ -28,11 +28,14 @@ class CVSLoad extends AbstractLoad
     public function getHeaders(): array
     {
         return [
+            'format' => 'csv',
             'column_separator' => ',',
+            'trim_double_quotes' => 'true',
+            'enclose' => '"',
         ];
     }
 
-    protected function putCVS(array $data): void
+    protected function putCSV(array $data): void
     {
         $isArrayMultidimensionalMap = is_array(current($data));
         if ($isArrayMultidimensionalMap) {

@@ -66,7 +66,7 @@ class Builder
         );
         $data = $response->getBody()->getContents();
         $loadResponse = new LoadResponse(json_decode($data, true));
-        if ($loadResponse->status == 'Fail') {
+        if (in_array($loadResponse->status, ['Fail', 'Label Already Exists'])) {
             throw new LoadException(sprintf('Doris Stream Load Error: %s, errorURL: %s', $loadResponse->message, $loadResponse->errorURL));
         }
         return $loadResponse;
