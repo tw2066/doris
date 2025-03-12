@@ -14,7 +14,7 @@ class Builder
 
     protected string $filePath = '';
 
-    protected LoadInterface $load;
+    protected ?LoadInterface $load = null;
 
     public function __construct(
         protected readonly Client $client,
@@ -26,15 +26,15 @@ class Builder
         private readonly string $password = '',
         protected bool $constMemory = false
     ) {
-        $this->load = new $this->format->value();
     }
 
     public function data(array $data): static
     {
+        $this->load ??= new $this->format->value();
         if ($this->constMemory) {
             $this->load->putFile($data);
         } else {
-            $this->load->add($data);
+            $this->load->putMemory($data);
         }
         return $this;
     }
@@ -47,29 +47,33 @@ class Builder
 
     public function load(): LoadResponse
     {
-        $filePath = $this->filePath ?: $this->load->getFilePath();
-        if (! empty($filePath)) {
-            $data = Utils::tryFopen($filePath, 'r');
-        } else {
-            $data = $this->load->getContents();
-        }
+        try {
+            $filePath = $this->filePath ?: $this->load->getFilePath();
+            if (! empty($filePath)) {
+                $data = Utils::tryFopen($filePath, 'r');
+            } else {
+                $data = $this->load->getContents();
+            }
 
-        $options = [
-            'body' => $data,
-            'headers' => $this->buildHeaders(),
-        ];
-        $uri = $this->feHost . '/api/' . $this->database . '/' . $this->table . '/_stream_load';
+            $options = [
+                'body' => $data,
+                'headers' => $this->buildHeaders(),
+            ];
+            $uri = $this->feHost . '/api/' . $this->database . '/' . $this->table . '/_stream_load';
 
-        $response = $this->client->put(
-            $uri,
-            $options
-        );
-        $data = $response->getBody()->getContents();
-        $loadResponse = new LoadResponse(json_decode($data, true));
-        if (in_array($loadResponse->status, ['Fail', 'Label Already Exists'])) {
-            throw new LoadException(sprintf('Doris Stream Load Error: %s, errorURL: %s', $loadResponse->message, $loadResponse->errorURL));
+            $response = $this->client->put(
+                $uri,
+                $options
+            );
+            $data = $response->getBody()->getContents();
+            $loadResponse = new LoadResponse(json_decode($data, true));
+            if (in_array($loadResponse->status, ['Fail', 'Label Already Exists'])) {
+                throw new LoadException(sprintf('Doris Stream Load Error: %s, errorURL: %s', $loadResponse->message, $loadResponse->errorURL));
+            }
+            return $loadResponse;
+        } finally {
+            $this->init();
         }
-        return $loadResponse;
     }
 
     public function setHeader(Header|string $key, $value): static
@@ -85,6 +89,13 @@ class Builder
             $this->setHeader($key, $value);
         }
         return $this;
+    }
+
+    protected function init(): void
+    {
+        $this->headers = [];
+        $this->filePath = '';
+        $this->load = null;
     }
 
     protected function buildHeaders(): array

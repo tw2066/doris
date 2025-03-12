@@ -6,7 +6,7 @@ namespace Doris\StreamLoad\Driver;
 
 class CSVLoad extends AbstractLoad
 {
-    public function add(array $data): void
+    public function putMemory(array $data): void
     {
         $this->fp ??= fopen('php://memory', 'r+');
         $this->putCSV($data);

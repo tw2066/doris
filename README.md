@@ -37,12 +37,6 @@ DORIS_PASSWORD=''
 ```php
 $streamLoad = Doris::streamLoad();
 ```
-#### 设置提交格式
-默认使用json提交,可以通过format方法设置格式
-```php
-$streamLoad = new StreamLoad('http://127.0.0.1:8040', 'test_db', 'root','');
-$builder = $streamLoad->format(Format::CSV)->table('test_stream_load');
-```
 
 #### 内存模式
 提交大量数据时,可以设置constMemory为true,减少内存占用
@@ -63,6 +57,13 @@ $builder->setHeader(\Doris\StreamLoad\Header::COLUMNS, 'user_id,name,age');
 
 ```php
 $builder->setHeader(\Doris\StreamLoad\Header::GROUP_COMMIT, 'async_mode');
+```
+#### 文件格式
+默认json格式,可以通过format方法设置格式
+> csv文件对数据格式有要求,推荐使用默认格式
+```php
+$streamLoad = Doris::streamLoad();
+$builder = $streamLoad->format(Format::CSV)->table('test_stream_load');
 ```
 
 #### 通过文件提交数据

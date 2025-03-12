@@ -8,9 +8,7 @@ class JSONLoad extends AbstractLoad
 {
     protected string $content = '';
 
-    protected array $data = [];
-
-    public function add(array $data): void
+    public function putMemory(array $data): void
     {
         $isArrayMultidimensionalMap = is_array(current($data));
         if ($isArrayMultidimensionalMap) {

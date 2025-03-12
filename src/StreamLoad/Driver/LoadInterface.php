@@ -6,7 +6,7 @@ namespace Doris\StreamLoad\Driver;
 
 interface LoadInterface
 {
-    public function add(array $data): void;
+    public function putMemory(array $data): void;
 
     public function putFile(array $data): void;
 
