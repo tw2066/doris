@@ -41,9 +41,11 @@ class CSVLoad extends AbstractLoad
         if ($isArrayMultidimensionalMap) {
             array_map(function ($item) {
                 fputcsv($this->fp, array_values($item));
+                ++$this->row;
             }, $data);
         } else {
             fputcsv($this->fp, array_values($data));
+            ++$this->row;
         }
     }
 }

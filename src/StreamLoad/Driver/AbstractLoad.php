@@ -8,6 +8,8 @@ abstract class AbstractLoad implements LoadInterface
 {
     protected mixed $fp = null;
 
+    protected int $row = 0;
+
     protected ?string $filePath = null;
 
     public function __destruct()
@@ -19,5 +21,10 @@ abstract class AbstractLoad implements LoadInterface
     public function getFilePath(): ?string
     {
         return $this->filePath;
+    }
+
+    public function getCurrentRow(): int
+    {
+        return $this->row;
     }
 }

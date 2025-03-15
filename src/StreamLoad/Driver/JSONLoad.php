@@ -26,9 +26,11 @@ class JSONLoad extends AbstractLoad
         if ($isArrayMultidimensionalMap) {
             array_map(function ($item) {
                 fwrite($this->fp, json_encode($item) . PHP_EOL);
+                ++$this->row;
             }, $data);
         } else {
             fwrite($this->fp, json_encode($data) . PHP_EOL);
+            ++$this->row;
         }
     }
 

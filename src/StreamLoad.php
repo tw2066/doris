@@ -69,7 +69,10 @@ class StreamLoad
     protected function getClient()
     {
         if ($this->client == null) {
-            $this->client = new Client();
+            $config = [
+                'connect_timeout' => 10,
+            ];
+            $this->client = new Client($config);
         }
         return $this->client;
     }

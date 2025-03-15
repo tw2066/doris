@@ -33,6 +33,7 @@ DORIS_FE_HOST=http://192.168.1.72:8040
 DORIS_DB=testdb
 DORIS_USER=root
 DORIS_PASSWORD=''
+DORIS_CONST_MEMORY=1
 ```
 ```php
 $streamLoad = Doris::streamLoad();
@@ -49,13 +50,13 @@ $builder = $streamLoad->constMemory(true)->table('test_stream_load');
 可以通过setHeader方法设置参数,参考[官方文档](https://doris.apache.org/zh-CN/docs/data-operate/import/import-way/stream-load-manual)Header参数
 
 ```php
-$streamLoad = Doris::streamLoad();
-$builder = $streamLoad->table('test_stream_load');
+$builder = Doris::table('test_stream_load');
 $builder->setHeader(\Doris\StreamLoad\Header::COLUMNS, 'user_id,name,age');
 ```
 #### 异步模式
 
 ```php
+$builder = Doris::table('test_stream_load');
 $builder->setHeader(\Doris\StreamLoad\Header::GROUP_COMMIT, 'async_mode');
 ```
 #### 文件格式
@@ -63,18 +64,22 @@ $builder->setHeader(\Doris\StreamLoad\Header::GROUP_COMMIT, 'async_mode');
 > csv文件对数据格式有要求,推荐使用默认格式
 ```php
 $streamLoad = Doris::streamLoad();
-$builder = $streamLoad->format(Format::CSV)->table('test_stream_load');
+$builder = $streamLoad->format(\Doris\StreamLoad\Format::CSV)->table('test_stream_load');
 ```
 
 #### 通过文件提交数据
 本地有cvs文件,可以通过文件直接导入上传
 
 ```php
-$streamLoad = Doris::streamLoad();
-$builder = $streamLoad->table('test_stream_load');
-$builder->setHeader(\Doris\StreamLoad\Header::COLUMNS, 'user_id,name,age')
-->file('/user/test.csv')
-->load();
+$builder = Doris::table('test_stream_load')
+            ->setHeaders([
+                'format' => 'csv',
+                'column_separator' => ',',
+                'trim_double_quotes' => 'true',
+                'enclose' => '"',
+            ])
+            ->file('/user/test.csv')
+            ->load();
 ```
 
 #### hyperf 框架使用

@@ -15,4 +15,6 @@ interface LoadInterface
     public function getHeaders(): array;
 
     public function getFilePath(): ?string;
+
+    public function getCurrentRow(): int;
 }

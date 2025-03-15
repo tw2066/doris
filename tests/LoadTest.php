@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DorisTest;
 
+use Doris\Doris;
 use Doris\StreamLoad;
 use Doris\StreamLoad\Header;
 use PHPUnit\Framework\TestCase;
@@ -35,9 +36,14 @@ class LoadTest extends TestCase
             ['user_id' => 1, 'name' => 'q', 'age' => 18],
             ['user_id' => 2, 'name' => 'w', 'age' => 19],
         ]);
+        $row = $Load->getCurrentRow();
+        $this->assertEquals(2, $row);
+
         $Load->putFile(['user_id' => 3, 'name' => 'w', 'age' => 20]);
         $result = file_get_contents($Load->getFilePath());
         $this->assertEquals($result, $contents);
+        $row = $Load->getCurrentRow();
+        $this->assertEquals(3, $row);
     }
 
     public function testCVSLoadContents()
@@ -77,7 +83,7 @@ class LoadTest extends TestCase
 
     public function loadCVS()
     {
-        $streamLoad = new StreamLoad('http://192.168.1.72:8040', 'testdb', 'root');
+        $streamLoad = Doris::streamLoad();
         $builder = $streamLoad->format(StreamLoad\Format::CSV)->constMemory(false)->table('test_streamload');
         $builder->data([
             [1, 'cvs\1', 11],
@@ -118,8 +124,7 @@ class LoadTest extends TestCase
 
     public function loadJSON()
     {
-        $streamLoad = new StreamLoad('http://192.168.1.72:8040', 'testdb', 'root');
-        $builder = $streamLoad->format(StreamLoad\Format::JSON)->constMemory(true)->table('test_streamload');
+        $builder = Doris::table('test_streamload');
         $builder->data([
             ['user_id' => 11, 'name' => 'json"11', 'age' => 111],
             ['user_id' => 12, 'name' => 'json\12', 'age' => 112],
@@ -130,6 +135,7 @@ class LoadTest extends TestCase
         $data = $builder->load();
         $this->assertEquals($data->status, 'Success');
 
+        $streamLoad = new StreamLoad('http://192.168.1.72:8040', 'testdb', 'root');
         $builder = $streamLoad->format(StreamLoad\Format::JSON)->constMemory(false)->table('test_streamload');
         $builder->data([
             ['user_id' => 14, 'name' => 'json14_你好', 'age' => 114],

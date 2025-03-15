@@ -45,35 +45,36 @@ class Builder
         return $this;
     }
 
+    public function currentRow(): int
+    {
+        return $this->load->getCurrentRow();
+    }
+
     public function load(): LoadResponse
     {
-        try {
-            $filePath = $this->filePath ?: $this->load->getFilePath();
-            if (! empty($filePath)) {
-                $data = Utils::tryFopen($filePath, 'r');
-            } else {
-                $data = $this->load->getContents();
-            }
-
-            $options = [
-                'body' => $data,
-                'headers' => $this->buildHeaders(),
-            ];
-            $uri = $this->feHost . '/api/' . $this->database . '/' . $this->table . '/_stream_load';
-
-            $response = $this->client->put(
-                $uri,
-                $options
-            );
-            $data = $response->getBody()->getContents();
-            $loadResponse = new LoadResponse(json_decode($data, true));
-            if (in_array($loadResponse->status, ['Fail', 'Label Already Exists'])) {
-                throw new LoadException(sprintf('Doris Stream Load Error: %s, errorURL: %s', $loadResponse->message, $loadResponse->errorURL));
-            }
-            return $loadResponse;
-        } finally {
-            $this->init();
+        $filePath = $this->filePath ?: $this->load->getFilePath();
+        if (! empty($filePath)) {
+            $data = Utils::tryFopen($filePath, 'r');
+        } else {
+            $data = $this->load->getContents();
         }
+
+        $options = [
+            'body' => $data,
+            'headers' => $this->buildHeaders(),
+        ];
+        $uri = $this->feHost . '/api/' . $this->database . '/' . $this->table . '/_stream_load';
+
+        $response = $this->client->put(
+            $uri,
+            $options
+        );
+        $data = $response->getBody()->getContents();
+        $loadResponse = new LoadResponse(json_decode($data, true));
+        if (in_array($loadResponse->status, ['Fail', 'Label Already Exists'])) {
+            throw new LoadException(sprintf('Doris Stream Load Error: %s, errorURL: %s', $loadResponse->message, $loadResponse->errorURL));
+        }
+        return $loadResponse;
     }
 
     public function setHeader(Header|string $key, $value): static
