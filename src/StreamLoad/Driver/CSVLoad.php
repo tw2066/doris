@@ -29,6 +29,8 @@ class CSVLoad extends AbstractLoad
     {
         return [
             'format' => 'csv',
+            'column_separator' => '	',
+            'line_delimiter' => '\n',
             'escape' => '"',
         ];
     }
