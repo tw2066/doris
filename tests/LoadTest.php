@@ -15,69 +15,69 @@ use PHPUnit\Framework\TestCase;
  */
 class LoadTest extends TestCase
 {
-//     public function testJSONLoadContents()
-//     {
-//         $contents =
-//             '{"user_id":1,"name":"q","age":18}
-// {"user_id":2,"name":"w","age":19}
-// {"user_id":3,"name":"w","age":20}
-// ';
-//         $Load = new StreamLoad\Driver\JSONLoad();
-//         $Load->putMemory([
-//             ['user_id' => 1, 'name' => 'q', 'age' => 18],
-//             ['user_id' => 2, 'name' => 'w', 'age' => 19],
-//         ]);
-//         $Load->putMemory(['user_id' => 3, 'name' => 'w', 'age' => 20]);
-//         $result = $Load->getContents();
-//         $this->assertEquals($result, $contents);
-//
-//         $Load = new StreamLoad\Driver\JSONLoad();
-//         $Load->putFile([
-//             ['user_id' => 1, 'name' => 'q', 'age' => 18],
-//             ['user_id' => 2, 'name' => 'w', 'age' => 19],
-//         ]);
-//         $row = $Load->getCurrentRow();
-//         $this->assertEquals(2, $row);
-//
-//         $Load->putFile(['user_id' => 3, 'name' => 'w', 'age' => 20]);
-//         $result = file_get_contents($Load->getFilePath());
-//         $this->assertEquals($result, $contents);
-//         $row = $Load->getCurrentRow();
-//         $this->assertEquals(3, $row);
-//     }
-//
-//     public function testCVSLoadContents()
-//     {
-//         $contents =
-//             '1,q,18
-// 2,w,19
-// 3,w,20
-// ';
-//         $Load = new StreamLoad\Driver\CSVLoad();
-//         $Load->putMemory([
-//             ['user_id' => 1, 'name' => 'q', 'age' => 18],
-//             ['user_id' => 2, 'name' => 'w', 'age' => 19],
-//         ]);
-//         $Load->putMemory(['user_id' => 3, 'name' => 'w', 'age' => 20]);
-//         $result = $Load->getContents();
-//
-//         $this->assertEquals($result, $contents);
-//         $Load = new StreamLoad\Driver\CSVLoad();
-//         $Load->putFile([
-//             ['user_id' => 1, 'name' => 'q', 'age' => 18],
-//             ['user_id' => 2, 'name' => 'w', 'age' => 19],
-//         ]);
-//         $Load->putFile(['user_id' => 3, 'name' => 'w', 'age' => 20]);
-//         $result = file_get_contents($Load->getFilePath());
-//         $this->assertEquals($result, $contents);
-//     }
+    public function testJSONLoadContents()
+    {
+        $contents =
+            '{"user_id":1,"name":"q","age":18}
+{"user_id":2,"name":"w","age":19}
+{"user_id":3,"name":"w","age":20}
+';
+        $Load = new StreamLoad\Driver\JSONLoad();
+        $Load->putMemory([
+            ['user_id' => 1, 'name' => 'q', 'age' => 18],
+            ['user_id' => 2, 'name' => 'w', 'age' => 19],
+        ]);
+        $Load->putMemory(['user_id' => 3, 'name' => 'w', 'age' => 20]);
+        $result = $Load->getContents();
+        $this->assertEquals($result, $contents);
+
+        $Load = new StreamLoad\Driver\JSONLoad();
+        $Load->putFile([
+            ['user_id' => 1, 'name' => 'q', 'age' => 18],
+            ['user_id' => 2, 'name' => 'w', 'age' => 19],
+        ]);
+        $row = $Load->getCurrentRow();
+        $this->assertEquals(2, $row);
+
+        $Load->putFile(['user_id' => 3, 'name' => 'w', 'age' => 20]);
+        $result = file_get_contents($Load->getFilePath());
+        $this->assertEquals($result, $contents);
+        $row = $Load->getCurrentRow();
+        $this->assertEquals(3, $row);
+    }
+
+    public function testCVSLoadContents()
+    {
+        $contents =
+            '1	q	18
+2	w	19
+3	w	20
+';
+        $Load = new StreamLoad\Driver\CSVLoad();
+        $Load->putMemory([
+            ['user_id' => 1, 'name' => 'q', 'age' => 18],
+            ['user_id' => 2, 'name' => 'w', 'age' => 19],
+        ]);
+        $Load->putMemory(['user_id' => 3, 'name' => 'w', 'age' => 20]);
+        $result = $Load->getContents();
+
+        $this->assertEquals($result, $contents);
+        $Load = new StreamLoad\Driver\CSVLoad();
+        $Load->putFile([
+            ['user_id' => 1, 'name' => 'q', 'age' => 18],
+            ['user_id' => 2, 'name' => 'w', 'age' => 19],
+        ]);
+        $Load->putFile(['user_id' => 3, 'name' => 'w', 'age' => 20]);
+        $result = file_get_contents($Load->getFilePath());
+        $this->assertEquals($result, $contents);
+    }
 
     public function testLoad()
     {
         if (PHP_OS === 'Darwin') {
             $this->loadCVS();
-            // $this->loadJSON();
-            // $this->async();
+            $this->loadJSON();
+            $this->async();
         }
     }
 

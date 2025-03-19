@@ -59,13 +59,6 @@ $builder->setHeader(\Doris\StreamLoad\Header::COLUMNS, 'user_id,name,age');
 $builder = Doris::table('test_stream_load');
 $builder->setHeader(\Doris\StreamLoad\Header::GROUP_COMMIT, 'async_mode');
 ```
-#### 文件格式
-默认json格式,可以通过format方法设置格式
-> csv文件对数据格式有要求,推荐使用默认格式
-```php
-$streamLoad = Doris::streamLoad();
-$builder = $streamLoad->format(\Doris\StreamLoad\Format::CSV)->table('test_stream_load');
-```
 
 #### 通过文件提交数据
 本地有cvs文件,可以通过文件直接导入上传
