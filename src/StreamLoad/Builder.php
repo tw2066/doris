@@ -12,7 +12,7 @@ class Builder
 {
     protected array $headers = [];
 
-    protected string $filePath = '';
+    protected ?string $filePath = null;
 
     protected ?LoadInterface $load = null;
 
@@ -30,7 +30,7 @@ class Builder
 
     public function data(array $data): static
     {
-        $this->load ??= new $this->format->value();
+        $this->load ??= new $this->format->value($this->filePath);
         if ($this->constMemory) {
             $this->load->putFile($data);
         } else {
@@ -39,9 +39,10 @@ class Builder
         return $this;
     }
 
-    public function file(string $filePath): static
+    public function setFilePath(string $filePath): static
     {
         $this->filePath = $filePath;
+        $this->constMemory = true;
         return $this;
     }
 
@@ -50,9 +51,9 @@ class Builder
         return $this->load->getCurrentRow();
     }
 
-    public function load(): LoadResponse
+    public function load(string $file = ''): LoadResponse
     {
-        $filePath = $this->filePath ?: $this->load->getFilePath();
+        $filePath = $file ?: $this->load->getFilePath();
         if (! empty($filePath)) {
             $data = Utils::tryFopen($filePath, 'r');
         } else {
@@ -92,10 +93,10 @@ class Builder
         return $this;
     }
 
-    protected function init(): void
+    public function init(): void
     {
         $this->headers = [];
-        $this->filePath = '';
+        $this->filePath = null;
         $this->load = null;
     }
 

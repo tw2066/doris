@@ -71,8 +71,7 @@ $builder = Doris::table('test_stream_load')
                 'trim_double_quotes' => 'true',
                 'enclose' => '"',
             ])
-            ->file('/user/test.csv')
-            ->load();
+            ->load('/user/test.csv');
 ```
 
 #### hyperf 框架使用

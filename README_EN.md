@@ -70,8 +70,7 @@ If you have a local CSV file, you can directly import and upload it.
 $streamLoad = Doris::streamLoad();
 $builder = $streamLoad->table('test_stream_load');
 $builder->setHeader(\Doris\StreamLoad\Header::COLUMNS, 'user_id,name,age')
-->file('/user/test.csv')
-->load();
+->load('/user/test.csv');
 ```
 #### Hyperf Framework Usage
 The underlying system automatically detects coroutine environments, no additional handling is required.
