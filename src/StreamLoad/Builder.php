@@ -62,7 +62,7 @@ class Builder
 
         $options = [
             'body' => $data,
-            'headers' => $this->buildHeaders(),
+            'headers' => $this->buildHeaders(empty($file)),
         ];
         $uri = $this->feHost . '/api/' . $this->database . '/' . $this->table . '/_stream_load';
 
@@ -75,6 +75,7 @@ class Builder
         if (in_array($loadResponse->status, ['Fail', 'Label Already Exists'])) {
             throw new LoadException(sprintf('Doris Stream Load Error: %s, errorURL: %s', $loadResponse->message, $loadResponse->errorURL));
         }
+        $this->load = null;
         return $loadResponse;
     }
 
@@ -93,20 +94,20 @@ class Builder
         return $this;
     }
 
-    public function init(): void
+    protected function init(): void
     {
         $this->headers = [];
         $this->filePath = null;
         $this->load = null;
     }
 
-    protected function buildHeaders(): array
+    protected function buildHeaders(bool $isLoad): array
     {
         $initHeaders = [
             'Expect' => '100-continue',
             'Authorization' => 'Basic ' . base64_encode($this->user . ':' . $this->password),
         ];
-        $loadHeaders = $this->filePath ? [] : $this->load->getHeaders();
+        $loadHeaders = $isLoad ? $this->load->getHeaders() : [];
         return array_merge($initHeaders, $loadHeaders, $this->headers);
     }
 }
