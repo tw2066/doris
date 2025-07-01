@@ -9,7 +9,7 @@ abstract class AbstractLoad implements LoadInterface
     protected mixed $fp = null;
 
     protected int $row = 0;
-    
+
     public function __construct(protected ?string $filePath = null)
     {
     }
